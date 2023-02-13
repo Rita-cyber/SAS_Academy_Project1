@@ -17,6 +17,21 @@ proc print data=cars_update label;
     var Make Model MSRP Invoice AvgMPG;
 run;
 
+*Creating Two-Way Frequency Reports i.e Two different frequency tables(Type and Region columns) joined to get a frequency report*
+title "Park Types by Region" ;
+proc freq data = pg1.np_codelookup order =freq ;
+     table Type*Region / nocum;
+     where type not like "%other%";
+run;
+
+title "Selected Park Types by Region";
+ods graphics on;
+proc freq data = pg1.np_codelookup order =freq ;
+     table Type*Region / nocol crosslist
+           plots=freqplot(groupby=row scale=grouppercent orient=horizontal);
+     where type in ('National Historic Site', 'National Monument', 'National Park');
+run;
+
 *Generating reports using PROC steps*
 
 title1 'Counts of Selected Park Types by Park Region';
